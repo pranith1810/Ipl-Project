@@ -1,6 +1,5 @@
 var fs = require("fs");
 var d3 = require("d3");
-var lodash = require("lodash");
 var iplFunctions = require("./ipl.js");
 
 let numberOfMatchesPerYear = {};
