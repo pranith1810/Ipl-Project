@@ -1,4 +1,6 @@
-module.exports = { matchesPerYear , matchesWonPerTeamPerYear , extraRuns2016 }
+const { map } = require("d3");
+
+module.exports = { matchesPerYear , matchesWonPerTeamPerYear , extraRuns2016 , economicalBowlers2015 }
 
 
 function matchesPerYear(data){
@@ -70,4 +72,52 @@ function extraRuns2016(matchesData,deliveriesData){
    return extraRunsPerTeam2016;
 }
 
+function economicalBowlers2015(matchesData,deliveriesData){
+   let topEconomicalBowlers2015 = {}; 
+   let allBowlerBallsRuns = {};
+   let bowlerEconomy = [];
+   let startId2015 = null;
+   let endId2015 = null;
+   for(let index=0;index<matchesData.length;index++){
+        if(matchesData[index].season === '2015'){
+            if(!startId2015){
+                startId2015 = Number(matchesData[index].id);
+            }
+            endId2015 = matchesData[index].id;
+        }
+     
+    }
+    endId2015 = Number(endId2015);
 
+    for(let index=0;index<deliveriesData.length;index++){
+        let rowObj = deliveriesData[index];
+        let bowlerObj = null;
+        let totalRunsObj = null;
+        if(Number(rowObj['match_id']) >= startId2015 && Number(rowObj['match_id']) <= endId2015 ){
+          bowlerObj = rowObj['bowler'];
+          totalRunsObj = rowObj['total_runs'];
+          if(allBowlerBallsRuns[bowlerObj])
+          {
+            allBowlerBallsRuns[bowlerObj][0]++;
+            allBowlerBallsRuns[bowlerObj][1] += Number(totalRunsObj);
+          } 
+          else{
+            allBowlerBallsRuns[bowlerObj]= [];
+            allBowlerBallsRuns[bowlerObj][0] = 1;
+            allBowlerBallsRuns[bowlerObj][1] = Number(totalRunsObj);
+          }
+        }
+    }
+    for(property in allBowlerBallsRuns){
+            allBowlerBallsRuns[property][0] = Math.floor(allBowlerBallsRuns[property][0]/6);
+            allBowlerBallsRuns[property][1] = allBowlerBallsRuns[property][1]/allBowlerBallsRuns[property][0];
+            bowlerEconomy.push([property, allBowlerBallsRuns[property][1]]);
+        }
+    bowlerEconomy.sort(function(a, b) {
+        return a[1] - b[1];
+    });
+   for(let index = 0;index<10;index++){
+        topEconomicalBowlers2015[bowlerEconomy[index][0]] = bowlerEconomy[index][1];
+    }
+  return topEconomicalBowlers2015;
+}
