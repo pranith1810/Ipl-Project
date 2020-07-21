@@ -96,23 +96,31 @@ function economicalBowlers2015(matchesData,deliveriesData){
         let rowObj = deliveriesData[index];
         let bowlerObj = null;
         let totalRunsObj = null;
+        let noBallRunsObj = null;
+        let wideBallRunsObj = null;
         if(Number(rowObj['match_id']) >= startId2015 && Number(rowObj['match_id']) <= endId2015 ){
           bowlerObj = rowObj['bowler'];
           totalRunsObj = rowObj['total_runs'];
+          noBallRunsObj = rowObj['noball_runs'];
+          wideBallRunsObj = rowObj['wide_runs'];
           if(allBowlerBallsRuns[bowlerObj])     //checking if bowler already present in object
           {
+            if(Number(noBallRunsObj)===0 && Number(wideBallRunsObj)===0 )
             allBowlerBallsRuns[bowlerObj][0]++;        //incrementing the number of balls
             allBowlerBallsRuns[bowlerObj][1] += Number(totalRunsObj); //adding the total runs in thtat ball
           } 
           else{
             allBowlerBallsRuns[bowlerObj]= [];  //each bowler has a list which contains no of balls and total runs
+            if(Number(noBallRunsObj)===0 && Number(wideBallRunsObj)===0 )
             allBowlerBallsRuns[bowlerObj][0] = 1;  //initialising the balls to one
+            else
+            allBowlerBallsRuns[bowlerObj][0] = 0; 
             allBowlerBallsRuns[bowlerObj][1] = Number(totalRunsObj); //initialising the total runs to that ball
           }
         }
     }
     for(property in allBowlerBallsRuns){
-            allBowlerBallsRuns[property][0] = Math.floor(allBowlerBallsRuns[property][0]/6);   //calculating number of overs from balls bowled by dividing with six and replacing with the balls bowled
+            allBowlerBallsRuns[property][0] = allBowlerBallsRuns[property][0]/6;   //calculating number of overs from balls bowled by dividing with six and replacing with the balls bowled
             allBowlerBallsRuns[property][1] = allBowlerBallsRuns[property][1]/allBowlerBallsRuns[property][0];  //calculating the economy rate by dividing the total runs eith number of overs 
             bowlerEconomy.push([property, allBowlerBallsRuns[property][1]]); //storing the bowler name and economy rate in an array 
         }
