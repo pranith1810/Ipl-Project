@@ -1,7 +1,11 @@
 
 module.exports = { matchesPerYear, matchesWonPerTeamPerYear, extraRuns2016, economicalBowlers2015 }
 
-//Calculating number of matches played per year
+/** 
+ * Calculating number of matches played per year
+ * @param {array} data  Array of objects where each object represents a row from given data
+ * @returns {object} Result object with each season as property and number of wins as value
+*/
 function matchesPerYear(data) {
 
     let noOfMatchesPerYear = {};
@@ -20,7 +24,11 @@ function matchesPerYear(data) {
     return noOfMatchesPerYear;
 }
 
-//calculating number of matches won per team in each season
+/** 
+ * Calculating the number of matches each team has won per season
+ * @param {array} data  Array of objects where each object represents a row from given data
+ * @returns {object} Result object with each season as an object which contains all the teams as properties and number of wins for each team as value
+*/
 function matchesWonPerTeamPerYear(data) {
     let noOfMatchesPerTeam = {};
 
@@ -56,7 +64,11 @@ function matchesWonPerTeamPerYear(data) {
     return noOfMatchesPerTeam;
 }
 
-//calculating extra runs per team in the year 2016
+/** 
+ * Calculating the extra runs per team in the year 2016
+ * @param {array} data  Array of objects where each object represents a row from given data
+ * @returns {object} Result object with each team as a property and number of extra runs as value
+*/
 function extraRuns2016(matchesData, deliveriesData) {
 
     let extraRunsPerTeam2016 = {};
@@ -96,7 +108,11 @@ function extraRuns2016(matchesData, deliveriesData) {
     return extraRunsPerTeam2016;
 }
 
-//calculating the top 10 economical bowlers in the year 2015
+/** 
+ * Calculating the top 10 economical bowlers in the year 2015
+ * @param {array} data  Array of objects where each object represents a row from given data
+ * @returns {object} Result object with top 10 bowlers economically with each bowler as a property and the economy rate as value
+*/
 function economicalBowlers2015(matchesData, deliveriesData) {
 
     let topEconomicalBowlers2015 = {};
@@ -139,7 +155,7 @@ function economicalBowlers2015(matchesData, deliveriesData) {
             else {
                 //each bowler has a list which contains no of balls and total runs respectively
                 allBowlerBallsRuns[bowlerObj] = [];
-                
+
                 if (Number(noBallRunsObj) === 0 && Number(wideBallRunsObj) === 0)
                     allBowlerBallsRuns[bowlerObj][0] = 1;
                 else
