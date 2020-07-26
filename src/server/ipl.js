@@ -10,16 +10,18 @@ function matchesPerYear(data) {
 
     let noOfMatchesPerYear = {};
 
-    for (let index = 0; index < data.length; index++) {
-        if (data[index].season in noOfMatchesPerYear) {
+    const matchesPerYearCallback = (data) => {
+        if (data.season in noOfMatchesPerYear) {
             //incrementing the value if the year is already present in the object
-            noOfMatchesPerYear[data[index].season]++;
+            noOfMatchesPerYear[data.season]++;
         }
         else {
             //initializing the year value to one if it is already not present
-            noOfMatchesPerYear[data[index].season] = 1;
+            noOfMatchesPerYear[data.season] = 1;
         }
     }
+
+    data.forEach(matchesPerYearCallback);
 
     return noOfMatchesPerYear;
 }
@@ -32,9 +34,9 @@ function matchesPerYear(data) {
 function matchesWonPerTeamPerYear(data) {
     let noOfMatchesPerTeam = {};
 
-    for (let index = 0; index < data.length; index++) {
+    const matchesWonPerTeamPerYearCallback = (data) => {
 
-        let rowObj = data[index];
+        let rowObj = data;
         let seasonInObj = rowObj['season'];
         let winnerInObj = rowObj['winner'];
         let resultInObj = rowObj['result'];
@@ -61,6 +63,8 @@ function matchesWonPerTeamPerYear(data) {
         }
     }
 
+    data.forEach(matchesWonPerTeamPerYearCallback);
+
     return noOfMatchesPerTeam;
 }
 
@@ -75,33 +79,41 @@ function extraRuns2016(matchesData, deliveriesData) {
     let startId2016 = null;
     let endId2016 = null;
 
-    for (let index = 0; index < matchesData.length; index++) {
-        if (matchesData[index].season === 2016) {
+    const matchesIn2016IdCallback = (matchesData) => {
+        if (matchesData.season === 2016) {
             if (!startId2016) {
-                startId2016 = matchesData[index].id;
+                startId2016 = matchesData.id;
             }
-            endId2016 = matchesData[index].id;
+            endId2016 = matchesData.id;
         }
-
     }
-    
-    for (let index = 0; index < deliveriesData.length; index++) {
 
-        let rowObj = deliveriesData[index];
-        let bowlingTeamObj = deliveriesData[index]['bowling_team'];
-        let extraRunsObj = deliveriesData[index]['extra_runs'];
-        
+    matchesData.forEach(matchesIn2016IdCallback);
+
+    const deliveriesIn2016Callback = (deliveriesData) => {
+        let rowObj = deliveriesData;
         if (rowObj['match_id'] >= startId2016 && rowObj['match_id'] <= endId2016) {
-            if (extraRunsPerTeam2016[bowlingTeamObj] !== undefined) {
-                //add extra runs to the value if already present
-                extraRunsPerTeam2016[bowlingTeamObj] = extraRunsPerTeam2016[bowlingTeamObj] + extraRunsObj;
-            }
-            else {
-                //initialize the property and set value as extra runs
-                extraRunsPerTeam2016[bowlingTeamObj] = extraRunsObj;
-            }
+            return true;
         }
     }
+
+    const extraRunsPerTeam2016Callback = (deliveriesData) => {
+
+        let bowlingTeamObj = deliveriesData['bowling_team'];
+        let extraRunsObj = deliveriesData['extra_runs'];
+
+        if (extraRunsPerTeam2016[bowlingTeamObj] !== undefined) {
+            //add extra runs to the value if already present
+            extraRunsPerTeam2016[bowlingTeamObj] = extraRunsPerTeam2016[bowlingTeamObj] + extraRunsObj;
+        }
+        else {
+            //initialize the property and set value as extra runs
+            extraRunsPerTeam2016[bowlingTeamObj] = extraRunsObj;
+        }
+    }
+
+    deliveriesData.filter(deliveriesIn2016Callback)
+        .forEach(extraRunsPerTeam2016Callback);
 
     return extraRunsPerTeam2016;
 }
@@ -119,51 +131,53 @@ function economicalBowlers2015(matchesData, deliveriesData) {
     let startId2015 = null;
     let endId2015 = null;
 
-    for (let index = 0; index < matchesData.length; index++) {
-        if (matchesData[index].season === 2015) {
+    const matchesIn2015IdCallback = (matchesData) => {
+        if (matchesData.season === 2015) {
             if (!startId2015) {
-                startId2015 = matchesData[index].id;
+                startId2015 = matchesData.id;
             }
-            endId2015 = matchesData[index].id;
+            endId2015 = matchesData.id;
         }
-
     }
 
-    for (let index = 0; index < deliveriesData.length; index++) {
+    matchesData.forEach(matchesIn2015IdCallback);
 
-        let rowObj = deliveriesData[index];
-        let bowlerObj = null;
-        let totalRunsObj = null;
-        let noBallRunsObj = null;
-        let wideBallRunsObj = null;
-
+    const deliveriesIn2015Callback = (deliveriesData) => {
+        let rowObj = deliveriesData;
         if (rowObj['match_id'] >= startId2015 && rowObj['match_id'] <= endId2015) {
+            return true;
+        }
+    }
 
-            bowlerObj = rowObj['bowler'];
-            totalRunsObj = rowObj['total_runs'];
-            noBallRunsObj = rowObj['noball_runs'];
-            wideBallRunsObj = rowObj['wide_runs'];
+    const allBowlerBallsRunsCallback = (deliveriesData) => {
+        let rowObj = deliveriesData;
+        let bowlerObj = rowObj['bowler'];
+        let totalRunsObj = rowObj['total_runs'];
+        let noBallRunsObj = rowObj['noball_runs'];
+        let wideBallRunsObj = rowObj['wide_runs'];
 
-            if (allBowlerBallsRuns[bowlerObj] !== undefined) {
-                if (noBallRunsObj === 0 && wideBallRunsObj === 0) {
-                    allBowlerBallsRuns[bowlerObj][0]++;
-                }
-                allBowlerBallsRuns[bowlerObj][1] += totalRunsObj;
+        if (allBowlerBallsRuns[bowlerObj] !== undefined) {
+            if (noBallRunsObj === 0 && wideBallRunsObj === 0) {
+                allBowlerBallsRuns[bowlerObj][0]++;
+            }
+            allBowlerBallsRuns[bowlerObj][1] += totalRunsObj;
+        }
+        else {
+            //each bowler has a list which contains no of balls and total runs respectively
+            allBowlerBallsRuns[bowlerObj] = [];
+
+            if (noBallRunsObj === 0 && wideBallRunsObj === 0) {
+                allBowlerBallsRuns[bowlerObj][0] = 1;
             }
             else {
-                //each bowler has a list which contains no of balls and total runs respectively
-                allBowlerBallsRuns[bowlerObj] = [];
-
-                if (noBallRunsObj === 0 && wideBallRunsObj === 0) {
-                    allBowlerBallsRuns[bowlerObj][0] = 1;
-                }
-                else {
-                    allBowlerBallsRuns[bowlerObj][0] = 0;
-                }
-                allBowlerBallsRuns[bowlerObj][1] = totalRunsObj;
+                allBowlerBallsRuns[bowlerObj][0] = 0;
             }
+            allBowlerBallsRuns[bowlerObj][1] = totalRunsObj;
         }
     }
+
+    deliveriesData.filter(deliveriesIn2015Callback)
+        .forEach(allBowlerBallsRunsCallback);
 
     for (property in allBowlerBallsRuns) {
         //number of overs from balls bowled by dividing with six 
@@ -178,9 +192,13 @@ function economicalBowlers2015(matchesData, deliveriesData) {
         return a[1] - b[1];
     });
 
-    for (let index = 0; index < 10; index++) {
-        topEconomicalBowlers2015[bowlerEconomy[index][0]] = bowlerEconomy[index][1];
+    const listTop10EconomicalBowlers = (eachBowler, index) => {
+        if (index < 10) {
+            topEconomicalBowlers2015[eachBowler[0]] = eachBowler[1];
+        }
     }
+
+    bowlerEconomy.forEach(listTop10EconomicalBowlers);
 
     return topEconomicalBowlers2015;
 }

@@ -8,7 +8,7 @@ fs.readFile("../data/matches.csv", "utf8", function (err, data) {
     }
     else {
 
-        let dataOfMatches = d3.csvParse(data,d3.autoType);
+        let dataOfMatches = d3.csvParse(data, d3.autoType);
 
         let numberOfMatchesPerYear = iplFunctions.matchesPerYear(dataOfMatches);
         fs.writeFile("../output/matchesPerYear.json", JSON.stringify(numberOfMatchesPerYear, null, 4), 'utf8', function (err) {
@@ -36,7 +36,7 @@ fs.readFile("../data/matches.csv", "utf8", function (err, data) {
             }
             else {
 
-                let dataOfDeliveries = d3.csvParse(data,d3.autoType);
+                let dataOfDeliveries = d3.csvParse(data, d3.autoType);
 
                 let extraRunsPerTeam2016 = iplFunctions.extraRuns2016(dataOfMatches, dataOfDeliveries);
                 fs.writeFile("../output/noOfExtraRunsPerTeam2016.json", JSON.stringify(extraRunsPerTeam2016, null, 4), 'utf8', function (err) {
