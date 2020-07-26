@@ -35,7 +35,7 @@ function matchesWonPerTeamPerYear(data) {
             // checking if the season is already present in the object
             if (seasonInObj in noOfMatchesPerTeam) {
                 //checking if the winner team is already present in the season object
-                if (noOfMatchesPerTeam[seasonInObj][winnerInObj]) {
+                if (noOfMatchesPerTeam[seasonInObj][winnerInObj] !== undefined) {
                     noOfMatchesPerTeam[seasonInObj][winnerInObj]++;
                 }
                 else {
@@ -82,7 +82,7 @@ function extraRuns2016(matchesData, deliveriesData) {
         let extraRunsObj = deliveriesData[index]['extra_runs'];
 
         if (Number(rowObj['match_id']) >= startId2016 && Number(rowObj['match_id']) <= endId2016) {
-            if (extraRunsPerTeam2016[bowlingTeamObj]) {
+            if (extraRunsPerTeam2016[bowlingTeamObj] !== undefined) {
                 //add extra runs to the value if already present
                 extraRunsPerTeam2016[bowlingTeamObj] = Number(extraRunsPerTeam2016[bowlingTeamObj]) + Number(extraRunsObj);
             }
@@ -131,7 +131,7 @@ function economicalBowlers2015(matchesData, deliveriesData) {
             noBallRunsObj = rowObj['noball_runs'];
             wideBallRunsObj = rowObj['wide_runs'];
 
-            if (allBowlerBallsRuns[bowlerObj]) {
+            if (allBowlerBallsRuns[bowlerObj] !== undefined) {
                 if (Number(noBallRunsObj) === 0 && Number(wideBallRunsObj) === 0)
                     allBowlerBallsRuns[bowlerObj][0]++;
                 allBowlerBallsRuns[bowlerObj][1] += Number(totalRunsObj);
@@ -139,6 +139,7 @@ function economicalBowlers2015(matchesData, deliveriesData) {
             else {
                 //each bowler has a list which contains no of balls and total runs respectively
                 allBowlerBallsRuns[bowlerObj] = [];
+                
                 if (Number(noBallRunsObj) === 0 && Number(wideBallRunsObj) === 0)
                     allBowlerBallsRuns[bowlerObj][0] = 1;
                 else
