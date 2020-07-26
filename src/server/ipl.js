@@ -76,31 +76,29 @@ function extraRuns2016(matchesData, deliveriesData) {
     let endId2016 = null;
 
     for (let index = 0; index < matchesData.length; index++) {
-        if (matchesData[index].season === '2016') {
+        if (matchesData[index].season === 2016) {
             if (!startId2016) {
-                startId2016 = Number(matchesData[index].id);
+                startId2016 = matchesData[index].id;
             }
             endId2016 = matchesData[index].id;
         }
 
     }
-
-    endId2016 = Number(endId2016);
-
+    
     for (let index = 0; index < deliveriesData.length; index++) {
 
         let rowObj = deliveriesData[index];
         let bowlingTeamObj = deliveriesData[index]['bowling_team'];
         let extraRunsObj = deliveriesData[index]['extra_runs'];
-
-        if (Number(rowObj['match_id']) >= startId2016 && Number(rowObj['match_id']) <= endId2016) {
+        
+        if (rowObj['match_id'] >= startId2016 && rowObj['match_id'] <= endId2016) {
             if (extraRunsPerTeam2016[bowlingTeamObj] !== undefined) {
                 //add extra runs to the value if already present
-                extraRunsPerTeam2016[bowlingTeamObj] = Number(extraRunsPerTeam2016[bowlingTeamObj]) + Number(extraRunsObj);
+                extraRunsPerTeam2016[bowlingTeamObj] = extraRunsPerTeam2016[bowlingTeamObj] + extraRunsObj;
             }
             else {
                 //initialize the property and set value as extra runs
-                extraRunsPerTeam2016[bowlingTeamObj] = Number(extraRunsObj);
+                extraRunsPerTeam2016[bowlingTeamObj] = extraRunsObj;
             }
         }
     }
@@ -122,25 +120,24 @@ function economicalBowlers2015(matchesData, deliveriesData) {
     let endId2015 = null;
 
     for (let index = 0; index < matchesData.length; index++) {
-        if (matchesData[index].season === '2015') {
+        if (matchesData[index].season === 2015) {
             if (!startId2015) {
-                startId2015 = Number(matchesData[index].id);
+                startId2015 = matchesData[index].id;
             }
             endId2015 = matchesData[index].id;
         }
 
     }
 
-    endId2015 = Number(endId2015);
-
     for (let index = 0; index < deliveriesData.length; index++) {
+
         let rowObj = deliveriesData[index];
         let bowlerObj = null;
         let totalRunsObj = null;
         let noBallRunsObj = null;
         let wideBallRunsObj = null;
 
-        if (Number(rowObj['match_id']) >= startId2015 && Number(rowObj['match_id']) <= endId2015) {
+        if (rowObj['match_id'] >= startId2015 && rowObj['match_id'] <= endId2015) {
 
             bowlerObj = rowObj['bowler'];
             totalRunsObj = rowObj['total_runs'];
@@ -148,19 +145,22 @@ function economicalBowlers2015(matchesData, deliveriesData) {
             wideBallRunsObj = rowObj['wide_runs'];
 
             if (allBowlerBallsRuns[bowlerObj] !== undefined) {
-                if (Number(noBallRunsObj) === 0 && Number(wideBallRunsObj) === 0)
+                if (noBallRunsObj === 0 && wideBallRunsObj === 0) {
                     allBowlerBallsRuns[bowlerObj][0]++;
-                allBowlerBallsRuns[bowlerObj][1] += Number(totalRunsObj);
+                }
+                allBowlerBallsRuns[bowlerObj][1] += totalRunsObj;
             }
             else {
                 //each bowler has a list which contains no of balls and total runs respectively
                 allBowlerBallsRuns[bowlerObj] = [];
 
-                if (Number(noBallRunsObj) === 0 && Number(wideBallRunsObj) === 0)
+                if (noBallRunsObj === 0 && wideBallRunsObj === 0) {
                     allBowlerBallsRuns[bowlerObj][0] = 1;
-                else
+                }
+                else {
                     allBowlerBallsRuns[bowlerObj][0] = 0;
-                allBowlerBallsRuns[bowlerObj][1] = Number(totalRunsObj);
+                }
+                allBowlerBallsRuns[bowlerObj][1] = totalRunsObj;
             }
         }
     }
@@ -180,6 +180,7 @@ function economicalBowlers2015(matchesData, deliveriesData) {
 
     for (let index = 0; index < 10; index++) {
         topEconomicalBowlers2015[bowlerEconomy[index][0]] = bowlerEconomy[index][1];
-        return topEconomicalBowlers2015;
     }
+
+    return topEconomicalBowlers2015;
 }
