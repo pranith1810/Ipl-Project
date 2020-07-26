@@ -1,134 +1,145 @@
 
-module.exports = { matchesPerYear , matchesWonPerTeamPerYear , extraRuns2016 , economicalBowlers2015 }
+module.exports = { matchesPerYear, matchesWonPerTeamPerYear, extraRuns2016, economicalBowlers2015 }
 
-//first function which give number of matches per year
-function matchesPerYear(data){
+//Calculating number of matches played per year
+function matchesPerYear(data) {
     let noOfMatchesPerYear = {};
-    for(let index=0;index<data.length;index++){      //accessing each row which is in the form of object in data array
-        if(data[index].season in noOfMatchesPerYear){
-            noOfMatchesPerYear[data[index].season]++; //incrementing the value if the year is already present in the object
+    for (let index = 0; index < data.length; index++) {
+        if (data[index].season in noOfMatchesPerYear) {
+            //incrementing the value if the year is already present in the object
+            noOfMatchesPerYear[data[index].season]++;
         }
-        else{
-            noOfMatchesPerYear[data[index].season]=1; //initialising the year value to one if it is already not present
+        else {
+            //initializing the year value to one if it is already not present
+            noOfMatchesPerYear[data[index].season] = 1; 
         }
     }
     return noOfMatchesPerYear;
 }
 
-//second function which gives matches won per team in each season
-//this functions returns a result object wgich contains object for each year and these year objects contains the wins of each team
-function matchesWonPerTeamPerYear(data){
+//calculating number of matches won per team in each season
+function matchesWonPerTeamPerYear(data) {
     let noOfMatchesPerTeam = {};
-    for(let index=0;index<data.length;index++){
-            let rowObj = data[index];
-            let seasonInObj = rowObj['season'];   
-            let winnerInObj = rowObj['winner'];  //storing the required values of each row for this particular function
-            let resultInObj = rowObj['result'];
-            if(resultInObj !== 'no result'){  
-            if(seasonInObj in noOfMatchesPerTeam){ // checking if the year is already present in the object
-                if(noOfMatchesPerTeam[seasonInObj][winnerInObj]){  //checking if the winner team is already present in the object
-                    noOfMatchesPerTeam[seasonInObj][winnerInObj] ++;
+    for (let index = 0; index < data.length; index++) {
+        let rowObj = data[index];
+        let seasonInObj = rowObj['season'];
+        let winnerInObj = rowObj['winner']; 
+        let resultInObj = rowObj['result'];
+        if (resultInObj !== 'no result') {
+            // checking if the season is already present in the object
+            if (seasonInObj in noOfMatchesPerTeam) { 
+                //checking if the winner team is already present in the season object
+                if (noOfMatchesPerTeam[seasonInObj][winnerInObj]) {  
+                    noOfMatchesPerTeam[seasonInObj][winnerInObj]++;
                 }
-                else{                                         //if winner not present in that particular year add the winner team into that year object and initialise to one
-                    noOfMatchesPerTeam[seasonInObj][winnerInObj]  = 1;
+                else {           
+                    //adding the winner team into that year object and initialize to one                              
+                    noOfMatchesPerTeam[seasonInObj][winnerInObj] = 1;
                 }
-                 
+
             }
-            else{
-                  noOfMatchesPerTeam[seasonInObj] = {};           //add the year in the object 
-                  noOfMatchesPerTeam[seasonInObj][winnerInObj]  = 1; //add the team in that particular year and initialise the value to one
+            else {
+                 //adding the season object in the object 
+                noOfMatchesPerTeam[seasonInObj] = {};    
+                //adding the team in that particular season       
+                noOfMatchesPerTeam[seasonInObj][winnerInObj] = 1; 
             }
         }
-     }
-      return noOfMatchesPerTeam;  
+    }
+    return noOfMatchesPerTeam;
 }
 
-//third function which gives the extra runs per team in the year 2016
-function extraRuns2016(matchesData,deliveriesData){
-   let extraRunsPerTeam2016 = {};
-   let startId2016 = null;
-   let endId2016 = null;
-   for(let index=0;index<matchesData.length;index++){  //calculating the start and end match ids of the year 2016 from matches.csv file data
-       if(matchesData[index].season === '2016'){
-           if(!startId2016){
-               startId2016 = Number(matchesData[index].id);  
-           }
-           endId2016 = matchesData[index].id;
-       }
-    
+//calculating extra runs per team in the year 2016
+function extraRuns2016(matchesData, deliveriesData) {
+    let extraRunsPerTeam2016 = {};
+    let startId2016 = null;
+    let endId2016 = null;
+    for (let index = 0; index < matchesData.length; index++) {  
+        if (matchesData[index].season === '2016') {
+            if (!startId2016) {
+                startId2016 = Number(matchesData[index].id);
+            }
+            endId2016 = matchesData[index].id;
+        }
+
     }
     endId2016 = Number(endId2016);
-    for(let index=0;index<deliveriesData.length;index++){
-       let rowObj = deliveriesData[index];
-       let bowlingTeamObj = deliveriesData[index]['bowling_team']; //requried values for this function
-       let extraRunsObj = deliveriesData[index]['extra_runs'];
-       if(Number(rowObj['match_id']) >= startId2016 && Number(rowObj['match_id']) <= endId2016 ){ //match id lies in the range of year 2016
-          if(extraRunsPerTeam2016[bowlingTeamObj]){
-            extraRunsPerTeam2016[bowlingTeamObj] = Number(extraRunsPerTeam2016[bowlingTeamObj])+Number(extraRunsObj);  //add extra runs to the value if already present
-          }
-          else{
-            extraRunsPerTeam2016[bowlingTeamObj] = Number(extraRunsObj); //initialise the property and set value as extra runs
-          }
-       }
+    for (let index = 0; index < deliveriesData.length; index++) {
+        let rowObj = deliveriesData[index];
+        let bowlingTeamObj = deliveriesData[index]['bowling_team'];
+        let extraRunsObj = deliveriesData[index]['extra_runs'];
+        if (Number(rowObj['match_id']) >= startId2016 && Number(rowObj['match_id']) <= endId2016) { 
+            if (extraRunsPerTeam2016[bowlingTeamObj]) {
+                //add extra runs to the value if already present
+                extraRunsPerTeam2016[bowlingTeamObj] = Number(extraRunsPerTeam2016[bowlingTeamObj]) + Number(extraRunsObj);  
+            }
+            else {
+                //initialize the property and set value as extra runs
+                extraRunsPerTeam2016[bowlingTeamObj] = Number(extraRunsObj); 
+            }
+        }
     }
-   return extraRunsPerTeam2016;
+    return extraRunsPerTeam2016;
 }
 
- //fourth function which gives the top 10 economical bowlers in the year 2015
-function economicalBowlers2015(matchesData,deliveriesData){
-   let topEconomicalBowlers2015 = {}; 
-   let allBowlerBallsRuns = {};
-   let bowlerEconomy = [];
-   let startId2015 = null;
-   let endId2015 = null;
-   for(let index=0;index<matchesData.length;index++){ //start and end ids for the year 2015
-        if(matchesData[index].season === '2015'){
-            if(!startId2015){
+//calculating the top 10 economical bowlers in the year 2015
+function economicalBowlers2015(matchesData, deliveriesData) {
+    let topEconomicalBowlers2015 = {};
+    let allBowlerBallsRuns = {};
+    let bowlerEconomy = [];
+    let startId2015 = null;
+    let endId2015 = null;
+    for (let index = 0; index < matchesData.length; index++) { 
+        if (matchesData[index].season === '2015') {
+            if (!startId2015) {
                 startId2015 = Number(matchesData[index].id);
             }
             endId2015 = matchesData[index].id;
         }
-     
+
     }
     endId2015 = Number(endId2015);
 
-    for(let index=0;index<deliveriesData.length;index++){  
+    for (let index = 0; index < deliveriesData.length; index++) {
         let rowObj = deliveriesData[index];
         let bowlerObj = null;
         let totalRunsObj = null;
         let noBallRunsObj = null;
         let wideBallRunsObj = null;
-        if(Number(rowObj['match_id']) >= startId2015 && Number(rowObj['match_id']) <= endId2015 ){
-          bowlerObj = rowObj['bowler'];
-          totalRunsObj = rowObj['total_runs'];
-          noBallRunsObj = rowObj['noball_runs'];
-          wideBallRunsObj = rowObj['wide_runs'];
-          if(allBowlerBallsRuns[bowlerObj])     //checking if bowler already present in object
-          {
-            if(Number(noBallRunsObj)===0 && Number(wideBallRunsObj)===0 )
-            allBowlerBallsRuns[bowlerObj][0]++;        //incrementing the number of balls
-            allBowlerBallsRuns[bowlerObj][1] += Number(totalRunsObj); //adding the total runs in thtat ball
-          } 
-          else{
-            allBowlerBallsRuns[bowlerObj]= [];  //each bowler has a list which contains no of balls and total runs
-            if(Number(noBallRunsObj)===0 && Number(wideBallRunsObj)===0 )
-            allBowlerBallsRuns[bowlerObj][0] = 1;  //initialising the balls to one
-            else
-            allBowlerBallsRuns[bowlerObj][0] = 0; 
-            allBowlerBallsRuns[bowlerObj][1] = Number(totalRunsObj); //initialising the total runs to that ball
-          }
+        if (Number(rowObj['match_id']) >= startId2015 && Number(rowObj['match_id']) <= endId2015) {
+            bowlerObj = rowObj['bowler'];
+            totalRunsObj = rowObj['total_runs'];
+            noBallRunsObj = rowObj['noball_runs'];
+            wideBallRunsObj = rowObj['wide_runs'];
+            if (allBowlerBallsRuns[bowlerObj])     
+            {
+                if (Number(noBallRunsObj) === 0 && Number(wideBallRunsObj) === 0)
+                    allBowlerBallsRuns[bowlerObj][0]++;        
+                allBowlerBallsRuns[bowlerObj][1] += Number(totalRunsObj); 
+            }
+            else {
+                //each bowler has a list which contains no of balls and total runs respectively
+                allBowlerBallsRuns[bowlerObj] = [];  
+                if (Number(noBallRunsObj) === 0 && Number(wideBallRunsObj) === 0)
+                    allBowlerBallsRuns[bowlerObj][0] = 1;  
+                else
+                    allBowlerBallsRuns[bowlerObj][0] = 0;
+                allBowlerBallsRuns[bowlerObj][1] = Number(totalRunsObj); 
+            }
         }
     }
-    for(property in allBowlerBallsRuns){
-            allBowlerBallsRuns[property][0] = allBowlerBallsRuns[property][0]/6;   //calculating number of overs from balls bowled by dividing with six and replacing with the balls bowled
-            allBowlerBallsRuns[property][1] = allBowlerBallsRuns[property][1]/allBowlerBallsRuns[property][0];  //calculating the economy rate by dividing the total runs eith number of overs 
-            bowlerEconomy.push([property, allBowlerBallsRuns[property][1]]); //storing the bowler name and economy rate in an array 
-        }
-    bowlerEconomy.sort(function(a, b) {
-        return a[1] - b[1];    //sorting based on economy rate
+    for (property in allBowlerBallsRuns) {
+         //number of overs from balls bowled by dividing with six 
+        allBowlerBallsRuns[property][0] = allBowlerBallsRuns[property][0] / 6;  
+        //calculating the economy rate by dividing the total runs with number of overs 
+        allBowlerBallsRuns[property][1] = allBowlerBallsRuns[property][1] / allBowlerBallsRuns[property][0];  
+        bowlerEconomy.push([property, allBowlerBallsRuns[property][1]]);  
+    }
+    //sorting based on economy rate
+    bowlerEconomy.sort(function (a, b) {
+        return a[1] - b[1];    
     });
-   for(let index = 0;index<10;index++){
-        topEconomicalBowlers2015[bowlerEconomy[index][0]] = bowlerEconomy[index][1];  //storing top 10 least economy rate bowlers in an object
-    }
-  return topEconomicalBowlers2015;
+    for (let index = 0; index < 10; index++) {
+        topEconomicalBowlers2015[bowlerEconomy[index][0]] = bowlerEconomy[index][1];  
+    return topEconomicalBowlers2015;
 }
