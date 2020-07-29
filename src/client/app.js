@@ -240,3 +240,36 @@ fetch('http://localhost:8080/src/output/noOfExtraRunsPerTeam2016.json')
     .catch((err) => {
         console.error('Error while fetching the noOfExtraRunsPerTeam2016.json file ' + err);
     });
+
+fetch('http://localhost:8080/src/output/topEconomicalBowlers2015.json')
+    .then((response) => {
+        if (response.ok === true) {
+            return response.json();
+        }
+        throw new Error('Request failed!');
+    })
+    .then((jsonResponse) => {
+        Highcharts.chart('chartOfTopEconomicalBowlers2015', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Top economical bowlers in 2015'
+            },
+            xAxis: {
+                categories: Object.keys(jsonResponse)
+            },
+            yAxis: {
+                title: {
+                    text: 'Economy rate'
+                }
+            },
+            series: [{
+                name: 'Economy Rate',
+                data: Object.values(jsonResponse)
+            },]
+        });
+    })
+    .catch((err) => {
+        console.error('Error while fetching the topEconomicalBowlers2015.json file ' + err);
+    });
