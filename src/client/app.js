@@ -31,7 +31,7 @@ fetch('http://localhost:8080/src/output/matchesPerYear.json')
         console.error('Error while fetching the matchesPerYear.json file ' + err);
     });
 
-    fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
+fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
     .then((response) => {
         if (response.ok === true) {
             return response.json();
@@ -206,4 +206,37 @@ fetch('http://localhost:8080/src/output/matchesPerYear.json')
     })
     .catch((err) => {
         console.error('Error while fetching the noOfMatchesTeamWonPerYear.json file ' + err);
+    });
+
+fetch('http://localhost:8080/src/output/noOfExtraRunsPerTeam2016.json')
+    .then((response) => {
+        if (response.ok === true) {
+            return response.json();
+        }
+        throw new Error('Request failed!');
+    })
+    .then((jsonResponse) => {
+        Highcharts.chart('chartOfNumOfExtraRuns2016', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Number extra runs per team in 2016'
+            },
+            xAxis: {
+                categories: Object.keys(jsonResponse)
+            },
+            yAxis: {
+                title: {
+                    text: 'Number of extra runs'
+                }
+            },
+            series: [{
+                name: 'Extra runs',
+                data: Object.values(jsonResponse)
+            }]
+        });
+    })
+    .catch((err) => {
+        console.error('Error while fetching the noOfExtraRunsPerTeam2016.json file ' + err);
     });
