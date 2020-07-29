@@ -58,6 +58,11 @@ fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
                     text: 'Number of wins'
                 }
             },
+            plotOptions: {
+                column: {
+                    minPointLength: 3
+                }
+            },
             series: [{
                 name: 'Mumbai Indians',
                 data: objectOfEachSeason.map((object) => {
