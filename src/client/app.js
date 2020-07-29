@@ -39,11 +39,36 @@ fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
         throw new Error('Request failed!');
     })
     .then((jsonResponse) => {
-        let objectOfEachSeason = [];
-        for (let year in jsonResponse) {
-            objectOfEachSeason.push(jsonResponse[year]);
+
+        let teams = {};
+        let seasonsObj = [];
+
+        for (let season in jsonResponse) {
+            seasonsObj.push(jsonResponse[season]);
+            for (team in jsonResponse[season]) {
+                if (teams[team] === undefined) {
+                    teams[team] = [];
+                }
+            }
         }
-        Highcharts.chart('chartOfNumOfWinsPerSeason', {
+
+        for (team in teams) {
+            seasonsObj.forEach((seasonObj) => {
+                let flag = 0;
+                for (teamObj in seasonObj) {
+                    if (teamObj === team) {
+                        teams[team].push(seasonObj[teamObj]);
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag === 0) {
+                    teams[team].push(0);
+                }
+            });
+        }
+
+        let numOfWinsChartOptions = {
             chart: {
                 type: 'column'
             },
@@ -63,151 +88,17 @@ fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
                     minPointLength: 3
                 }
             },
-            series: [{
-                name: 'Mumbai Indians',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Mumbai Indians') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Deccan Chargers',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Deccan Chargers') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Kings XI Punjab',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Kings XI Punjab') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Rajasthan Royals',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Rajasthan Royals') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Royal Challengers Bangalore',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Royal Challengers Bangalore') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Delhi Daredevils',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Delhi Daredevils') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Chennai Super Kings',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Chennai Super Kings') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Kolkata Knight Riders',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Kolkata Knight Riders') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Sunrisers Hyderabad',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Sunrisers Hyderabad') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Pune Warriors',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Pune Warriors') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Kochi Tuskers Kerala',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Kochi Tuskers Kerala') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Rising Pune Supergiants',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Rising Pune Supergiants') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            {
-                name: 'Gujarat Lions',
-                data: objectOfEachSeason.map((object) => {
-                    for (team in object) {
-                        if (team === 'Gujarat Lions') {
-                            return object[team];
-                        }
-                    }
-                    return 0;
-                })
-            },
-            ]
-        })
+            series: []
+        }
+        for (team in teams) {
+            numOfWinsChartOptions.series.push({
+                name: team,
+                data: teams[team]
+            });
+        }
+
+        Highcharts.chart('chartOfNumOfWinsPerSeason', numOfWinsChartOptions);
+
     })
     .catch((err) => {
         console.error('Error while fetching the noOfMatchesTeamWonPerYear.json file ' + err);
