@@ -1,12 +1,15 @@
 fetch('http://localhost:8080/src/output/matchesPerYear.json')
     .then((response) => {
+
         if (response.ok === true) {
             return response.json();
         }
+
         throw new Error('Request failed!');
     })
     .then((jsonResponse) => {
-        Highcharts.chart('chartOfNumOfMatches', {
+
+        let matchesPerYearOptions = {
             chart: {
                 type: 'column'
             },
@@ -25,7 +28,10 @@ fetch('http://localhost:8080/src/output/matchesPerYear.json')
                 name: 'Number of matches',
                 data: Object.values(jsonResponse)
             }]
-        });
+        }
+
+        Highcharts.chart('chartOfNumOfMatches', matchesPerYearOptions);
+
     })
     .catch((err) => {
         console.error('Error while fetching the matchesPerYear.json file ' + err);
@@ -33,9 +39,11 @@ fetch('http://localhost:8080/src/output/matchesPerYear.json')
 
 fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
     .then((response) => {
+
         if (response.ok === true) {
             return response.json();
         }
+
         throw new Error('Request failed!');
     })
     .then((jsonResponse) => {
@@ -90,6 +98,7 @@ fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
             },
             series: []
         }
+
         for (team in teams) {
             numOfWinsChartOptions.series.push({
                 name: team,
@@ -106,13 +115,17 @@ fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
 
 fetch('http://localhost:8080/src/output/noOfExtraRunsPerTeam2016.json')
     .then((response) => {
+
         if (response.ok === true) {
             return response.json();
         }
+
         throw new Error('Request failed!');
+
     })
     .then((jsonResponse) => {
-        Highcharts.chart('chartOfNumOfExtraRuns2016', {
+
+        let noOfExtraRuns2016Options = {
             chart: {
                 type: 'column'
             },
@@ -131,7 +144,10 @@ fetch('http://localhost:8080/src/output/noOfExtraRunsPerTeam2016.json')
                 name: 'Extra runs',
                 data: Object.values(jsonResponse)
             }]
-        });
+        }
+
+        Highcharts.chart('chartOfNumOfExtraRuns2016', noOfExtraRuns2016Options);
+
     })
     .catch((err) => {
         console.error('Error while fetching the noOfExtraRunsPerTeam2016.json file ' + err);
@@ -145,7 +161,8 @@ fetch('http://localhost:8080/src/output/topEconomicalBowlers2015.json')
         throw new Error('Request failed!');
     })
     .then((jsonResponse) => {
-        Highcharts.chart('chartOfTopEconomicalBowlers2015', {
+
+        let topEconomicalBowlers2015Options = {
             chart: {
                 type: 'column'
             },
@@ -164,7 +181,10 @@ fetch('http://localhost:8080/src/output/topEconomicalBowlers2015.json')
                 name: 'Economy Rate',
                 data: Object.values(jsonResponse)
             },]
-        });
+        }
+
+        Highcharts.chart('chartOfTopEconomicalBowlers2015', topEconomicalBowlers2015Options);
+
     })
     .catch((err) => {
         console.error('Error while fetching the topEconomicalBowlers2015.json file ' + err);
