@@ -1,6 +1,7 @@
-var fs = require("fs");
-var d3 = require("d3");
-var iplFunctions = require("./ipl.js");
+let fs = require("fs");
+let d3 = require("d3");
+let iplFunctions = require("./ipl.js");
+let config = require("./config.js");
 
 fs.readFile("../data/matches.csv", "utf8", function (err, data) {
     if (err) {
