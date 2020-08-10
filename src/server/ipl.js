@@ -54,49 +54,23 @@ function matchesWonPerTeamPerYear(connection) {
  * @param {array} data  Array of objects where each object represents a row from given data
  * @returns {object} Result object with each team as a property and number of extra runs as value
 */
-function extraRuns2016(matchesData, deliveriesData) {
+function extraRuns2016(connection) {
+    return new Promise((resolve, reject) => {
 
-    let extraRunsPerTeam2016 = {};
-    let startId2016 = null;
-    let endId2016 = null;
+        let query = `SELECT bowling_team,sum(extra_runs) AS extra_runs_2016 
+        FROM deliveries 
+        WHERE match_id IN (SELECT id FROM matches WHERE season = 2016)
+        GROUP BY bowling_team;`;
 
-    const matchesIn2016IdCallback = (matchesData) => {
-        if (matchesData.season === 2016) {
-            if (!startId2016) {
-                startId2016 = matchesData.id;
+        connection.query(query, function (err, result) {
+            if (err) {
+                reject(err);
             }
-            endId2016 = matchesData.id;
-        }
-    }
-
-    matchesData.forEach(matchesIn2016IdCallback);
-
-    const deliveriesIn2016Callback = (deliveriesData) => {
-        let rowObj = deliveriesData;
-        if (rowObj['match_id'] >= startId2016 && rowObj['match_id'] <= endId2016) {
-            return true;
-        }
-    }
-
-    const extraRunsPerTeam2016Callback = (deliveriesData) => {
-
-        let bowlingTeamObj = deliveriesData['bowling_team'];
-        let extraRunsObj = deliveriesData['extra_runs'];
-
-        if (extraRunsPerTeam2016[bowlingTeamObj] !== undefined) {
-            //add extra runs to the value if already present
-            extraRunsPerTeam2016[bowlingTeamObj] = extraRunsPerTeam2016[bowlingTeamObj] + extraRunsObj;
-        }
-        else {
-            //initialize the property and set value as extra runs
-            extraRunsPerTeam2016[bowlingTeamObj] = extraRunsObj;
-        }
-    }
-
-    deliveriesData.filter(deliveriesIn2016Callback)
-        .forEach(extraRunsPerTeam2016Callback);
-
-    return extraRunsPerTeam2016;
+            else {
+                resolve(result);
+            }
+        });
+    });
 }
 
 /** 

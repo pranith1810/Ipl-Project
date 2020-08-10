@@ -47,6 +47,21 @@ connection.connect((err) => {
             .catch(error => {
                 console.error('An error occurred while writing to numberOfMatchesPerTeamPerYear.json file.' + error);
             })
+
+        iplFunctions.extraRuns2016(connection)
+            .then((result) => {
+                fs.writeFile("../output/noOfExtraRunsPerTeam2016.json", JSON.stringify(result, null, 4), 'utf8', function (err) {
+                    if (err) {
+                        throw err;
+                    }
+                    else {
+                        console.log("Number of extra runs per team in the year 2016  JSON file has been saved.");
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('An error occurred while writing to noOfExtraRunsPerTeam2016.json file.' + error);
+            })
     }
 });
 
