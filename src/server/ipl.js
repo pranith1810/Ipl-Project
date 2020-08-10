@@ -3,7 +3,7 @@ module.exports = { matchesPerYear, matchesWonPerTeamPerYear, extraRuns2016, econ
 
 /** 
  * Calculating number of matches played per year
- * @param {array} data  Array of objects where each object represents a row from given data
+ * @param {object} connection  Connection object to a database
  * @returns {object} Result object with each season as property and number of wins as value
 */
 function matchesPerYear(connection) {
@@ -27,7 +27,7 @@ function matchesPerYear(connection) {
 
 /** 
  * Calculating the number of matches each team has won per season
- * @param {array} data  Array of objects where each object represents a row from given data
+ * @param {object} connection Array of objects where each object represents a row from given data
  * @returns {object} Result object with each season as an object which contains all the teams as properties and number of wins for each team as value
 */
 function matchesWonPerTeamPerYear(connection) {
@@ -51,7 +51,7 @@ function matchesWonPerTeamPerYear(connection) {
 
 /** 
  * Calculating the extra runs per team in the year 2016
- * @param {array} data  Array of objects where each object represents a row from given data
+ * @param {object} connection Array of objects where each object represents a row from given data
  * @returns {object} Result object with each team as a property and number of extra runs as value
 */
 function extraRuns2016(connection) {
@@ -75,85 +75,30 @@ function extraRuns2016(connection) {
 
 /** 
  * Calculating the top 10 economical bowlers in the year 2015
- * @param {array} data  Array of objects where each object represents a row from given data
+ * @param {object} connection Array of objects where each object represents a row from given data
  * @returns {object} Result object with top 10 bowlers economically with each bowler as a property and the economy rate as value
 */
-function economicalBowlers2015(matchesData, deliveriesData) {
+function economicalBowlers2015(connection) {
+    return new Promise((resolve, reject) => {
 
-    let topEconomicalBowlers2015 = {};
-    let allBowlerBallsRuns = {};
-    let bowlerEconomy = [];
-    let startId2015 = null;
-    let endId2015 = null;
+        let query = `SELECT bowler AS bowler_name,            
+        (sum(total_runs)/(SELECT count(bowler) FROM deliveries
+        WHERE match_id IN (SELECT id FROM matches WHERE season = 2015) 
+        AND bowler = bowler_name
+        AND noball_runs=0 AND wide_runs=0 ))*6 AS economy
+        FROM deliveries
+        WHERE match_id IN (SELECT id FROM matches WHERE season = 2015)
+        GROUP BY bowler
+        ORDER BY economy
+        LIMIT 10;`;
 
-    const matchesIn2015IdCallback = (matchesData) => {
-        if (matchesData.season === 2015) {
-            if (!startId2015) {
-                startId2015 = matchesData.id;
-            }
-            endId2015 = matchesData.id;
-        }
-    }
-
-    matchesData.forEach(matchesIn2015IdCallback);
-
-    const deliveriesIn2015Callback = (deliveriesData) => {
-        let rowObj = deliveriesData;
-        if (rowObj['match_id'] >= startId2015 && rowObj['match_id'] <= endId2015) {
-            return true;
-        }
-    }
-
-    const allBowlerBallsRunsCallback = (deliveriesData) => {
-        let rowObj = deliveriesData;
-        let bowlerObj = rowObj['bowler'];
-        let totalRunsObj = rowObj['total_runs'];
-        let noBallRunsObj = rowObj['noball_runs'];
-        let wideBallRunsObj = rowObj['wide_runs'];
-
-        if (allBowlerBallsRuns[bowlerObj] !== undefined) {
-            if (noBallRunsObj === 0 && wideBallRunsObj === 0) {
-                allBowlerBallsRuns[bowlerObj][0]++;
-            }
-            allBowlerBallsRuns[bowlerObj][1] += totalRunsObj;
-        }
-        else {
-            //each bowler has a list which contains no of balls and total runs respectively
-            allBowlerBallsRuns[bowlerObj] = [];
-
-            if (noBallRunsObj === 0 && wideBallRunsObj === 0) {
-                allBowlerBallsRuns[bowlerObj][0] = 1;
+        connection.query(query, function (err, result) {
+            if (err) {
+                reject(err);
             }
             else {
-                allBowlerBallsRuns[bowlerObj][0] = 0;
+                resolve(result);
             }
-            allBowlerBallsRuns[bowlerObj][1] = totalRunsObj;
-        }
-    }
-
-    deliveriesData.filter(deliveriesIn2015Callback)
-        .forEach(allBowlerBallsRunsCallback);
-
-    for (property in allBowlerBallsRuns) {
-        //number of overs from balls bowled by dividing with six 
-        allBowlerBallsRuns[property][0] = allBowlerBallsRuns[property][0] / 6;
-        //calculating the economy rate by dividing the total runs with number of overs 
-        allBowlerBallsRuns[property][1] = allBowlerBallsRuns[property][1] / allBowlerBallsRuns[property][0];
-        bowlerEconomy.push([property, allBowlerBallsRuns[property][1]]);
-    }
-
-    //sorting based on economy rate
-    bowlerEconomy.sort(function (a, b) {
-        return a[1] - b[1];
+        });
     });
-
-    const listTop10EconomicalBowlers = (eachBowler, index) => {
-        if (index < 10) {
-            topEconomicalBowlers2015[eachBowler[0]] = eachBowler[1];
-        }
-    }
-
-    bowlerEconomy.forEach(listTop10EconomicalBowlers);
-
-    return topEconomicalBowlers2015;
 }
