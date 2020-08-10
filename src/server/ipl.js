@@ -6,24 +6,23 @@ module.exports = { matchesPerYear, matchesWonPerTeamPerYear, extraRuns2016, econ
  * @param {array} data  Array of objects where each object represents a row from given data
  * @returns {object} Result object with each season as property and number of wins as value
 */
-function matchesPerYear(data) {
+function matchesPerYear(connection) {
 
-    let noOfMatchesPerYear = {};
+    return new Promise((resolve, reject) => {
 
-    const matchesPerYearCallback = (data) => {
-        if (data.season in noOfMatchesPerYear) {
-            //incrementing the value if the year is already present in the object
-            noOfMatchesPerYear[data.season]++;
-        }
-        else {
-            //initializing the year value to one if it is already not present
-            noOfMatchesPerYear[data.season] = 1;
-        }
-    }
+        let query = `SELECT season,count(season) AS matchesNum
+                    FROM matches 
+                    GROUP BY season;`
 
-    data.forEach(matchesPerYearCallback);
-
-    return noOfMatchesPerYear;
+        connection.query(query, function (err, result) {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(result);
+            }
+        });
+    });
 }
 
 /** 
