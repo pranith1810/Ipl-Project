@@ -32,6 +32,21 @@ connection.connect((err) => {
             .catch(error => {
                 console.error('An error occurred while writing to numberOfMatchesPerYear.json file.' + error);
             })
+
+        iplFunctions.matchesWonPerTeamPerYear(connection)
+            .then((result) => {
+                fs.writeFile("../output/noOfMatchesTeamWonPerYear.json", JSON.stringify(result, null, 4), 'utf8', function (err) {
+                    if (err) {
+                        throw err;
+                    }
+                    else {
+                        console.log("Number of matches a team won per year JSON file has been saved.");
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('An error occurred while writing to numberOfMatchesPerTeamPerYear.json file.' + error);
+            })
     }
 });
 

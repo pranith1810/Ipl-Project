@@ -30,41 +30,23 @@ function matchesPerYear(connection) {
  * @param {array} data  Array of objects where each object represents a row from given data
  * @returns {object} Result object with each season as an object which contains all the teams as properties and number of wins for each team as value
 */
-function matchesWonPerTeamPerYear(data) {
-    let noOfMatchesPerTeam = {};
+function matchesWonPerTeamPerYear(connection) {
 
-    const matchesWonPerTeamPerYearCallback = (data) => {
+    return new Promise((resolve, reject) => {
 
-        let rowObj = data;
-        let seasonInObj = rowObj['season'];
-        let winnerInObj = rowObj['winner'];
-        let resultInObj = rowObj['result'];
+        let query = `SELECT season,winner,count(winner) FROM matches
+                    WHERE result != 'no result'
+                    GROUP BY winner,season; `
 
-        if (resultInObj !== 'no result') {
-            // checking if the season is already present in the object
-            if (seasonInObj in noOfMatchesPerTeam) {
-                //checking if the winner team is already present in the season object
-                if (noOfMatchesPerTeam[seasonInObj][winnerInObj] !== undefined) {
-                    noOfMatchesPerTeam[seasonInObj][winnerInObj]++;
-                }
-                else {
-                    //adding the winner team into that year object and initialize to one                              
-                    noOfMatchesPerTeam[seasonInObj][winnerInObj] = 1;
-                }
-
+        connection.query(query, function (err, result) {
+            if (err) {
+                reject(err);
             }
             else {
-                //adding the season object in the object 
-                noOfMatchesPerTeam[seasonInObj] = {};
-                //adding the team in that particular season       
-                noOfMatchesPerTeam[seasonInObj][winnerInObj] = 1;
+                resolve(result);
             }
-        }
-    }
-
-    data.forEach(matchesWonPerTeamPerYearCallback);
-
-    return noOfMatchesPerTeam;
+        });
+    });
 }
 
 /** 
