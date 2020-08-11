@@ -12,9 +12,12 @@ function matchesPerYear(connection) {
 
         let noOfMatchesPerYear = {};
 
-        let query = `SELECT season,count(season) AS matchesNum
-                    FROM matches 
-                    GROUP BY season;`
+        let query = `SELECT 
+                        season, count(season) AS matchesNum
+                    FROM 
+                        matches 
+                    GROUP BY
+                        season;`;
 
         connection.query(query, function (err, result) {
             if (err) {
@@ -42,9 +45,14 @@ function matchesWonPerTeamPerYear(connection) {
 
     return new Promise((resolve, reject) => {
 
-        let query = `SELECT season,winner,count(winner) as match_wins FROM matches
-                    WHERE result != 'no result'
-                    GROUP BY winner,season; `
+        let query = `SELECT 
+                        season, winner, count(winner) AS match_wins 
+                    FROM 
+                        matches
+                    WHERE 
+                        result != 'no result'
+                    GROUP BY 
+                        winner, season;`;
 
         connection.query(query, function (err, result) {
             if (err) {
@@ -78,10 +86,14 @@ function extraRuns2016(connection) {
 
         let extraRunsPerTeam2016 = {};
 
-        let query = `SELECT bowling_team,sum(extra_runs) AS extra_runs_2016 
-        FROM deliveries 
-        WHERE match_id IN (SELECT id FROM matches WHERE season = 2016)
-        GROUP BY bowling_team;`;
+        let query = `SELECT 
+                        bowling_team, sum(extra_runs) AS extra_runs_2016 
+                    FROM 
+                        deliveries 
+                    WHERE 
+                        match_id IN (SELECT id FROM matches WHERE season = 2016)
+                    GROUP BY 
+                        bowling_team;`;
 
         connection.query(query, function (err, result) {
             if (err) {
@@ -108,16 +120,26 @@ function economicalBowlers2015(connection) {
 
         let topEconomicalBowlers2015 = {};
 
-        let query = `SELECT bowler AS bowler_name,            
-        (sum(total_runs)/(SELECT count(bowler) FROM deliveries
-        WHERE match_id IN (SELECT id FROM matches WHERE season = 2015) 
-        AND bowler = bowler_name
-        AND noball_runs=0 AND wide_runs=0 ))*6 AS economy
-        FROM deliveries
-        WHERE match_id IN (SELECT id FROM matches WHERE season = 2015)
-        GROUP BY bowler
-        ORDER BY economy
-        LIMIT 10;`;
+        let query = `SELECT 
+                        bowler AS bowler_name,
+                        (sum(total_runs)/(SELECT
+                                            count(bowler) FROM deliveries
+                                        WHERE 
+                                            match_id IN (SELECT id FROM matches WHERE season = 2015) 
+                                        AND 
+                                            bowler = bowler_name
+                                        AND 
+                                            noball_runs=0 AND wide_runs=0 ))*6 
+                        AS economy
+                    FROM 
+                        deliveries
+                    WHERE 
+                        match_id IN (SELECT id FROM matches WHERE season = 2015)
+                    GROUP 
+                        BY bowler
+                    ORDER BY 
+                        economy
+                    LIMIT 10;`;
 
         connection.query(query, function (err, result) {
             if (err) {
