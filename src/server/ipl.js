@@ -10,6 +10,8 @@ function matchesPerYear(connection) {
 
     return new Promise((resolve, reject) => {
 
+        let noOfMatchesPerYear = {};
+
         let query = `SELECT season,count(season) AS matchesNum
                     FROM matches 
                     GROUP BY season;`
@@ -19,7 +21,11 @@ function matchesPerYear(connection) {
                 reject(err);
             }
             else {
-                resolve(result);
+                result.forEach(rowObj => {
+                    noOfMatchesPerYear[rowObj['season']] = rowObj['matchesNum'];
+                });
+
+                resolve(noOfMatchesPerYear);
             }
         });
     });
@@ -32,9 +38,11 @@ function matchesPerYear(connection) {
 */
 function matchesWonPerTeamPerYear(connection) {
 
+    let noOfMatchesPerTeam = {};
+
     return new Promise((resolve, reject) => {
 
-        let query = `SELECT season,winner,count(winner) FROM matches
+        let query = `SELECT season,winner,count(winner) as match_wins FROM matches
                     WHERE result != 'no result'
                     GROUP BY winner,season; `
 
@@ -43,7 +51,18 @@ function matchesWonPerTeamPerYear(connection) {
                 reject(err);
             }
             else {
-                resolve(result);
+                result.forEach(rowObj => {
+                    let season = rowObj['season'];
+                    if (season in noOfMatchesPerTeam) {
+                        noOfMatchesPerTeam[season][rowObj['winner']] = rowObj['match_wins'];
+                    }
+                    else {
+                        noOfMatchesPerTeam[season] = {};
+                        noOfMatchesPerTeam[season][rowObj['winner']] = rowObj['match_wins'];
+                    }
+                });
+
+                resolve(noOfMatchesPerTeam);
             }
         });
     });
@@ -57,6 +76,8 @@ function matchesWonPerTeamPerYear(connection) {
 function extraRuns2016(connection) {
     return new Promise((resolve, reject) => {
 
+        let extraRunsPerTeam2016 = {};
+
         let query = `SELECT bowling_team,sum(extra_runs) AS extra_runs_2016 
         FROM deliveries 
         WHERE match_id IN (SELECT id FROM matches WHERE season = 2016)
@@ -67,7 +88,11 @@ function extraRuns2016(connection) {
                 reject(err);
             }
             else {
-                resolve(result);
+                result.forEach(rowObj => {
+                    extraRunsPerTeam2016[rowObj['bowling_team']] = rowObj['extra_runs_2016'];
+                });
+
+                resolve(extraRunsPerTeam2016);
             }
         });
     });
@@ -80,6 +105,8 @@ function extraRuns2016(connection) {
 */
 function economicalBowlers2015(connection) {
     return new Promise((resolve, reject) => {
+
+        let topEconomicalBowlers2015 = {};
 
         let query = `SELECT bowler AS bowler_name,            
         (sum(total_runs)/(SELECT count(bowler) FROM deliveries
@@ -97,7 +124,11 @@ function economicalBowlers2015(connection) {
                 reject(err);
             }
             else {
-                resolve(result);
+                result.forEach(rowObj => {
+                    topEconomicalBowlers2015[rowObj['bowler_name']] = rowObj['economy'];
+                });
+
+                resolve(topEconomicalBowlers2015);
             }
         });
     });
