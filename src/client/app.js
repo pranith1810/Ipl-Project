@@ -1,4 +1,4 @@
-fetch('http://localhost:8080/src/output/matchesPerYear.json')
+fetch('http://localhost:8080/matchesPerYear')
     .then((response) => {
 
         if (response.ok === true) {
@@ -37,7 +37,7 @@ fetch('http://localhost:8080/src/output/matchesPerYear.json')
         console.error('Error while fetching the matchesPerYear.json file ' + err);
     });
 
-fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
+fetch('http://localhost:8080/noOfMatchesTeamWonPerYear')
     .then((response) => {
 
         if (response.ok === true) {
@@ -113,7 +113,7 @@ fetch('http://localhost:8080/src/output/noOfMatchesTeamWonPerYear.json')
         console.error('Error while fetching the noOfMatchesTeamWonPerYear.json file ' + err);
     });
 
-fetch('http://localhost:8080/src/output/noOfExtraRunsPerTeam2016.json')
+fetch('http://localhost:8080/noOfExtraRunsPerTeam2016')
     .then((response) => {
 
         if (response.ok === true) {
@@ -153,7 +153,7 @@ fetch('http://localhost:8080/src/output/noOfExtraRunsPerTeam2016.json')
         console.error('Error while fetching the noOfExtraRunsPerTeam2016.json file ' + err);
     });
 
-fetch('http://localhost:8080/src/output/topEconomicalBowlers2015.json')
+fetch('http://localhost:8080/topEconomicalBowlers2015')
     .then((response) => {
         if (response.ok === true) {
             return response.json();
