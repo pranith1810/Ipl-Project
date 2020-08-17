@@ -1,14 +1,7 @@
-fetch('http://localhost:8080/matchesPerYear')
+axios.defaults.baseURL = 'http://localhost:8080';
+
+axios.get('/matchesPerYear')
     .then((response) => {
-
-        if (response.ok === true) {
-            return response.json();
-        }
-
-        throw new Error('Request failed!');
-    })
-    .then((jsonResponse) => {
-
         let matchesPerYearOptions = {
             chart: {
                 type: 'column'
@@ -17,7 +10,7 @@ fetch('http://localhost:8080/matchesPerYear')
                 text: 'Number of matches played per year'
             },
             xAxis: {
-                categories: Object.keys(jsonResponse)
+                categories: Object.keys(response.data)
             },
             yAxis: {
                 title: {
@@ -26,7 +19,7 @@ fetch('http://localhost:8080/matchesPerYear')
             },
             series: [{
                 name: 'Number of matches',
-                data: Object.values(jsonResponse)
+                data: Object.values(response.data)
             }]
         }
 
@@ -37,17 +30,10 @@ fetch('http://localhost:8080/matchesPerYear')
         console.error('Error while fetching the matchesPerYear.json file ' + err);
     });
 
-fetch('http://localhost:8080/noOfMatchesTeamWonPerYear')
+axios.get('/noOfMatchesTeamWonPerYear')
     .then((response) => {
 
-        if (response.ok === true) {
-            return response.json();
-        }
-
-        throw new Error('Request failed!');
-    })
-    .then((jsonResponse) => {
-
+        let jsonResponse = response.data;
         let teams = {};
         let seasonsObj = [];
 
@@ -113,17 +99,11 @@ fetch('http://localhost:8080/noOfMatchesTeamWonPerYear')
         console.error('Error while fetching the noOfMatchesTeamWonPerYear.json file ' + err);
     });
 
-fetch('http://localhost:8080/noOfExtraRunsPerTeam2016')
+
+axios.get('/noOfExtraRunsPerTeam2016')
     .then((response) => {
 
-        if (response.ok === true) {
-            return response.json();
-        }
-
-        throw new Error('Request failed!');
-
-    })
-    .then((jsonResponse) => {
+        let jsonResponse = response.data;
 
         let noOfExtraRuns2016Options = {
             chart: {
@@ -153,14 +133,10 @@ fetch('http://localhost:8080/noOfExtraRunsPerTeam2016')
         console.error('Error while fetching the noOfExtraRunsPerTeam2016.json file ' + err);
     });
 
-fetch('http://localhost:8080/topEconomicalBowlers2015')
+axios.get('/topEconomicalBowlers2015')
     .then((response) => {
-        if (response.ok === true) {
-            return response.json();
-        }
-        throw new Error('Request failed!');
-    })
-    .then((jsonResponse) => {
+
+        let jsonResponse = response.data;
 
         let topEconomicalBowlers2015Options = {
             chart: {
