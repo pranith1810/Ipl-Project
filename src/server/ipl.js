@@ -120,26 +120,24 @@ function economicalBowlers2015(connection) {
 
         let topEconomicalBowlers2015 = {};
 
-        let query = `SELECT 
-                        bowler AS bowler_name,
-                        (sum(total_runs)/(SELECT
-                                            count(bowler) FROM deliveries
-                                        WHERE 
-                                            match_id IN (SELECT id FROM matches WHERE season = 2015) 
-                                        AND 
-                                            bowler = bowler_name
-                                        AND 
-                                            noball_runs=0 AND wide_runs=0 ))*6 
-                        AS economy
-                    FROM 
-                        deliveries
-                    WHERE 
-                        match_id IN (SELECT id FROM matches WHERE season = 2015)
-                    GROUP 
-                        BY bowler
+        let query = `SELECT	 
+                        bowler,(total_runs/(all_balls-total_no_balls-total_wide_balls))*6 as economy  /*4th function*/
+                    FROM
+                        (SELECT 
+                            bowler,sum(total_runs) AS total_runs ,count(*) as all_balls, 
+                            SUM(IF(noball_runs > 0, 1, 0)) AS total_no_balls,
+                            SUM(IF(wide_runs > 0, 1, 0)) AS total_wide_balls
+                        FROM 
+                            deliveries
+                        WHERE 
+                            match_id IN (SELECT id FROM matches WHERE season = 2015)
+                        GROUP BY 
+                            bowler)
+                        AS table1
                     ORDER BY 
                         economy
-                    LIMIT 10;`;
+                    LIMIT 
+                        10;`;
 
         connection.query(query, function (err, result) {
             if (err) {
@@ -147,7 +145,7 @@ function economicalBowlers2015(connection) {
             }
             else {
                 result.forEach(rowObj => {
-                    topEconomicalBowlers2015[rowObj['bowler_name']] = rowObj['economy'];
+                    topEconomicalBowlers2015[rowObj['bowler']] = rowObj['economy'];
                 });
 
                 resolve(JSON.stringify(topEconomicalBowlers2015));
