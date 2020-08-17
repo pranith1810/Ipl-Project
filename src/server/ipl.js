@@ -28,7 +28,7 @@ function matchesPerYear(connection) {
                     noOfMatchesPerYear[rowObj['season']] = rowObj['matchesNum'];
                 });
 
-                resolve(noOfMatchesPerYear);
+                resolve(JSON.stringify(noOfMatchesPerYear));
             }
         });
     });
@@ -70,7 +70,7 @@ function matchesWonPerTeamPerYear(connection) {
                     }
                 });
 
-                resolve(noOfMatchesPerTeam);
+                resolve(JSON.stringify(noOfMatchesPerTeam));
             }
         });
     });
@@ -104,7 +104,7 @@ function extraRuns2016(connection) {
                     extraRunsPerTeam2016[rowObj['bowling_team']] = rowObj['extra_runs_2016'];
                 });
 
-                resolve(extraRunsPerTeam2016);
+                resolve(JSON.stringify(extraRunsPerTeam2016));
             }
         });
     });
@@ -150,7 +150,7 @@ function economicalBowlers2015(connection) {
                     topEconomicalBowlers2015[rowObj['bowler_name']] = rowObj['economy'];
                 });
 
-                resolve(topEconomicalBowlers2015);
+                resolve(JSON.stringify(topEconomicalBowlers2015));
             }
         });
     });
