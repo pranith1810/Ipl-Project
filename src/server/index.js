@@ -1,5 +1,3 @@
-let fs = require("fs");
-let iplFunctions = require("./ipl.js");
 let config = require("./config.js");
 let mysql = require('mysql');
 
@@ -12,7 +10,7 @@ let connection = mysql.createConnection({
 
 connection.connect((err) => {
     if (err) {
-        console.error('Error while connecting to database' + err);
+        throw new Error('Connection to database failed!!!'+err);
     }
     else {
         console.log('Connection to database successful!!');
