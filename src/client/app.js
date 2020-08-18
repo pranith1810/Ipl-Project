@@ -1,4 +1,3 @@
-axios.defaults.baseURL = 'http://localhost:8080';
 
 axios.get('/matchesPerYear')
     .then((response) => {
