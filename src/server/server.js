@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
     switch (req.url) {
 
         case '/':
-            readFilePromise('../client/index.html')
+            readFilePromise('src/client/index.html')
                 .then((data) => {
                     res.writeHead(200, {
                         'Content-Type': 'text/html'
@@ -38,7 +38,7 @@ const server = http.createServer((req, res) => {
             break;
 
         case '/app.js':
-            readFilePromise('../client/app.js')
+            readFilePromise('src/client/app.js')
                 .then((data) => {
                     res.writeHead(200, {
                         'Content-Type': 'text/javascript'
@@ -54,7 +54,7 @@ const server = http.createServer((req, res) => {
             break;
 
         case '/app.css':
-            readFilePromise('../client/app.css')
+            readFilePromise('src/client/app.css')
                 .then((data) => {
                     res.writeHead(200, {
                         'Content-Type': 'text/css'
